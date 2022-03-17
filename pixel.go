@@ -40,7 +40,7 @@ func (p *Pixel) SetChars(chars []string) {
 // Can just return an empty string for no formatting
 // if you don't want to use ANSI
 func (p *Pixel) GetColourCode() string {
-	return ansi.ColorCode(fmt.Sprint(p.fg, ':', p.bg))
+	return ansi.ColorCode(fmt.Sprint(p.fg, ":", p.bg))
 }
 
 func (p *Pixel) GetChars() []string {

@@ -10,7 +10,6 @@
 package board
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/mgutz/ansi"
@@ -19,7 +18,6 @@ import (
 /*
 	TYPES
 */
-type Colour string
 
 // Interface of things to be put on the board
 // Chars is a string array of characters to display
@@ -84,21 +82,21 @@ func (b *Board) RenderString(border Border) string {
 
 	// Top Border
 	var renderedStr strings.Builder
-	renderedStr.WriteByte(border[BORDER_TOP_LEFT])
-	for i := 0; i < bw*tw; i += tw {
-		renderedStr.WriteByte(border[BORDER_SIDE_TOP])
+	renderedStr.WriteRune(border[BORDER_TOP_LEFT])
+	for i := 0; i < bw*tw; i++ {
+		renderedStr.WriteRune(border[BORDER_SIDE_TOP])
 	}
-	renderedStr.WriteByte(border[BORDER_TOP_RIGHT])
+	renderedStr.WriteRune(border[BORDER_TOP_RIGHT])
 	renderedStr.WriteByte('\n')
 
 	// Contents
-	for y := bh; y >= 0; y++ {
+	for y := bh - 1; y >= 0; y-- {
 		row := b.data[y]
 
 		// In case the tile spans multiple rows
 		for ty := 0; ty < th; ty++ {
 
-			renderedStr.WriteByte(border[BORDER_SIDE_LEFT])
+			renderedStr.WriteRune(border[BORDER_SIDE_LEFT])
 			for _, tile := range row {
 				renderedStr.WriteString(tile.GetColourCode())
 
@@ -114,20 +112,20 @@ func (b *Board) RenderString(border Border) string {
 					}
 					renderedStr.WriteByte(char)
 				}
-				renderedStr.WriteString(ansi.ColorCode(fmt.Sprint(ansi.DefaultFG, ':', ansi.DefaultBG)))
+				renderedStr.WriteString(ansi.ColorCode("reset"))
 			}
-			renderedStr.WriteByte(border[BORDER_SIDE_RIGHT])
+			renderedStr.WriteRune(border[BORDER_SIDE_RIGHT])
 			renderedStr.WriteByte('\n')
 
 		}
 	}
 
 	// bottom Border
-	renderedStr.WriteByte(border[BORDER_BOTTOM_LEFT])
-	for i := 0; i < bw*tw; i += tw {
-		renderedStr.WriteByte(border[BORDER_SIDE_BOTTOM])
+	renderedStr.WriteRune(border[BORDER_BOTTOM_LEFT])
+	for i := 0; i < bw*tw; i++ {
+		renderedStr.WriteRune(border[BORDER_SIDE_BOTTOM])
 	}
-	renderedStr.WriteByte(border[BORDER_BOTTOM_RIGHT])
+	renderedStr.WriteRune(border[BORDER_BOTTOM_RIGHT])
 	renderedStr.WriteByte('\n')
 
 	return renderedStr.String()

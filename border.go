@@ -13,7 +13,7 @@
  */
 package board
 
-type Border string
+type Border []rune
 
 // Indices
 const (
@@ -27,10 +27,10 @@ const (
 	BORDER_SIDE_LEFT    = 7
 )
 
-const (
-	NoBorder         = Border("        ")
-	ASCIIBorder      = Border("+-+|+-+|")
-	ASCIIBevelBorder = Border("/-\\|/-\\|")
-	SingleBorder     = Border("┌─┐│┘─└│")
-	DoubleBorder     = Border("╔═╗║┘═╝╚║")
+var (
+	NoBorder         = Border([]rune("        "))
+	ASCIIBorder      = Border([]rune("+-+|+-+|"))
+	ASCIIBevelBorder = Border([]rune("/-\\|/-\\|"))
+	SingleBorder     = Border([]rune("┌─┐│┘─└│"))
+	DoubleBorder     = Border([]rune("╔═╗║┘═╝╚║"))
 )
