@@ -57,7 +57,7 @@ func (b *Board) GetTile(x, y int) Tile {
 	if x < 0 || x >= w || y < 0 || y >= h {
 		return nil
 	}
-	return b.data[x][y]
+	return b.data[y][x]
 }
 
 // Sets a tile at a specific position
@@ -66,7 +66,7 @@ func (b *Board) SetTile(x int, y int, t Tile) {
 	if x < 0 || x >= w || y < 0 || y >= h {
 		return
 	}
-	b.data[x][y] = t
+	b.data[y][x] = t
 }
 
 // Returns width & height of this board
