@@ -55,11 +55,19 @@ func NewBoard(width, height int, initTile Tile) *Board {
 
 // Gets the tile from a specific position
 func (b *Board) GetTile(x, y int) Tile {
+	w, h := b.GetSize()
+	if x < 0 || x >= w || y < 0 || y >= h {
+		return nil
+	}
 	return b.data[x][y]
 }
 
 // Sets a tile at a specific position
 func (b *Board) SetTile(x int, y int, t Tile) {
+	w, h := b.GetSize()
+	if x < 0 || x >= w || y < 0 || y >= h {
+		return
+	}
 	b.data[x][y] = t
 }
 
