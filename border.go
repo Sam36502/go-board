@@ -32,5 +32,5 @@ var (
 	ASCIIBorder      = Border([]rune("+-+|+-+|"))
 	ASCIIBevelBorder = Border([]rune("/-\\|/-\\|"))
 	SingleBorder     = Border([]rune("┌─┐│┘─└│"))
-	DoubleBorder     = Border([]rune("╔═╗║┘═╝╚║"))
+	DoubleBorder     = Border([]rune("╔═╗║╝═╚║"))
 )
