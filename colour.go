@@ -1,22 +1,36 @@
-package board
+package main
 
-type Colour string
+import (
+	"fmt"
 
+	"github.com/mgutz/ansi"
+)
+
+type Colour struct {
+	Foreground string
+	Background string
+}
+
+func (c *Colour) GetANSIString() string {
+	return ansi.ColorCode(fmt.Sprint(c.Foreground, ":", c.Background))
+}
+
+// Colour Constants
 const (
-	Black        = Colour("black")
-	Red          = Colour("red")
-	Green        = Colour("green")
-	Yellow       = Colour("yellow")
-	Blue         = Colour("blue")
-	Magenta      = Colour("magenta")
-	Cyan         = Colour("cyan")
-	White        = Colour("white")
-	LightBlack   = Colour("black+h")
-	LightRed     = Colour("red+h")
-	LightGreen   = Colour("green+h")
-	LightYellow  = Colour("yellow+h")
-	LightBlue    = Colour("blue+h")
-	LightMagenta = Colour("magenta+h")
-	LightCyan    = Colour("cyan+h")
-	LightWhite   = Colour("white+h")
+	Black        = "black"
+	Red          = "red"
+	Green        = "green"
+	Yellow       = "yellow"
+	Blue         = "blue"
+	Magenta      = "magenta"
+	Cyan         = "cyan"
+	White        = "white"
+	LightBlack   = "black+h"
+	LightRed     = "red+h"
+	LightGreen   = "green+h"
+	LightYellow  = "yellow+h"
+	LightBlue    = "blue+h"
+	LightMagenta = "magenta+h"
+	LightCyan    = "cyan+h"
+	LightWhite   = "white+h"
 )
