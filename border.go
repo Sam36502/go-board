@@ -11,7 +11,7 @@
  *	655554
  *
  */
-package board
+package main
 
 type Border []rune
 

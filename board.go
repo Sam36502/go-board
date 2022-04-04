@@ -7,7 +7,7 @@
  *
  */
 
-package board
+package main
 
 import (
 	"fmt"
@@ -37,19 +37,10 @@ type Tile interface {
 	GetHeight() int
 }
 
-// Interface of piece which can be placed on the
-// Board. They temporarily cover the Tile below
-// them while they are in a position.
-type Piece interface {
-	Tile
-	GetPosition() Coord
-	MovePiece(Coord)
-}
-
 // Holds all the board-related data
 type Board struct {
 	tiles  [][]Tile
-	pieces map[Coord]Piece
+	pieces map[Coord]Tile
 }
 
 /*
@@ -66,6 +57,7 @@ func NewBoard(width, height int, initTile Tile) *Board {
 			b.tiles[y] = append(b.tiles[y], initTile)
 		}
 	}
+	b.pieces = map[Coord]Tile{}
 	return &b
 }
 
@@ -86,7 +78,7 @@ func (b *Board) SetTile(pos Coord, t Tile) {
 }
 
 // Gets the piece from a specific position
-func (b *Board) GetPiece(pos Coord) (Piece, bool) {
+func (b *Board) GetPiece(pos Coord) (Tile, bool) {
 	if pos.X < 0 || pos.X >= b.GetWidth() || pos.Y < 0 || pos.Y >= b.GetHeight() {
 		return nil, false
 	}
@@ -94,13 +86,24 @@ func (b *Board) GetPiece(pos Coord) (Piece, bool) {
 	return piece, exists
 }
 
-// Sets a tile at a specific position
-func (b *Board) SetPiece(pos Coord, p Piece) {
+// Sets a piece at a specific position
+func (b *Board) SetPiece(pos Coord, p Tile) {
 	if pos.X < 0 || pos.X >= b.GetWidth() || pos.Y < 0 || pos.Y >= b.GetHeight() {
 		return
 	}
 	b.pieces[pos] = p
-	p.MovePiece(pos)
+}
+
+// Moves a piece on a board
+func (b *Board) MovePiece(start, end Coord) {
+	if start.X < 0 || start.X >= b.GetWidth() || start.Y < 0 || start.Y >= b.GetHeight() {
+		return
+	}
+	if end.X < 0 || end.X >= b.GetWidth() || end.Y < 0 || end.Y >= b.GetHeight() {
+		return
+	}
+	b.pieces[end] = b.pieces[start]
+	delete(b.pieces, start)
 }
 
 // Returns width & height of this board
@@ -150,13 +153,14 @@ func (b *Board) RenderString(border Border) string {
 
 			renderedStr.WriteRune(border[BORDER_SIDE_LEFT])
 			for x, tile := range row {
-				renderedStr.WriteString(tile.GetANSIString())
 
 				// Check if a piece is here
 				piece, exists := b.GetPiece(Coord{x, y})
 				if exists {
 					tile = piece
 				}
+
+				renderedStr.WriteString(tile.GetANSIString())
 
 				tileRow := ""
 				if len(tile.GetChars()) > ty {
