@@ -72,6 +72,17 @@ func (b *Board) SetTile(pos Coord, t Tile) {
 	b.tiles[pos.Y][pos.X] = t
 }
 
+// Gets a list of all piece coordinates on the board
+func (b *Board) GetPieceCoords() []Coord {
+	coords := make([]Coord, len(b.pieces))
+	i := 0
+	for k := range b.pieces {
+		coords[i] = k
+		i++
+	}
+	return coords
+}
+
 // Gets the piece from a specific position and returns whether it exists or not
 func (b *Board) GetPiece(pos Coord) (Tile, bool) {
 	if !pos.IsInBounds(b.GetWidth(), b.GetHeight()) {
