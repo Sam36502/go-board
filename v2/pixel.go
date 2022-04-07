@@ -5,7 +5,7 @@
  *
  */
 
-package main
+package board
 
 const (
 	PIXEL_WIDTH  = 2 // Makes a roughly

@@ -1,3 +1,5 @@
+github.com/Sam36502/go-board/v2 v2.0.1 h1:K4+ppM+BvrxZ7wvWCAst2RbzvRyDYyTgrHjdw9mico8=
+github.com/Sam36502/go-board/v2 v2.0.1/go.mod h1:+9DKY1QI7K8uE/iok5UZKIe/6MCF07K0Trd0NVS7X/c=
 github.com/mattn/go-colorable v0.1.12 h1:jF+Du6AlPIjs2BiUiQlKOX0rt3SujHxPnksPKZbaA40=
 github.com/mattn/go-colorable v0.1.12/go.mod h1:u5H1YNBxpqRaxsYJYSkiCWKzEfiAb1Gb520KVy5xxl4=
 github.com/mattn/go-isatty v0.0.14 h1:yVuAays6BHfxijgZPzw+3Zlu5yQgKGP2/hcQbHb7S9Y=

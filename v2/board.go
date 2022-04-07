@@ -7,7 +7,7 @@
  *
  */
 
-package main
+package board
 
 import (
 	"fmt"
