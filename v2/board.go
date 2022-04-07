@@ -20,11 +20,6 @@ import (
 	TYPES
 */
 
-type Coord struct {
-	X int
-	Y int
-}
-
 // Interface of things to be put on the board
 // Chars is a string array of characters to display
 // in the Tile when printed
@@ -63,7 +58,7 @@ func NewBoard(width, height int, initTile Tile) *Board {
 
 // Gets the tile from a specific position
 func (b *Board) GetTile(pos Coord) Tile {
-	if pos.X < 0 || pos.X >= b.GetWidth() || pos.Y < 0 || pos.Y >= b.GetHeight() {
+	if !pos.IsInBounds(b.GetWidth(), b.GetHeight()) {
 		return nil
 	}
 	return b.tiles[pos.Y][pos.X]
@@ -71,15 +66,15 @@ func (b *Board) GetTile(pos Coord) Tile {
 
 // Sets a tile at a specific position
 func (b *Board) SetTile(pos Coord, t Tile) {
-	if pos.X < 0 || pos.X >= b.GetWidth() || pos.Y < 0 || pos.Y >= b.GetHeight() {
+	if !pos.IsInBounds(b.GetWidth(), b.GetHeight()) {
 		return
 	}
 	b.tiles[pos.Y][pos.X] = t
 }
 
-// Gets the piece from a specific position
+// Gets the piece from a specific position and returns whether it exists or not
 func (b *Board) GetPiece(pos Coord) (Tile, bool) {
-	if pos.X < 0 || pos.X >= b.GetWidth() || pos.Y < 0 || pos.Y >= b.GetHeight() {
+	if !pos.IsInBounds(b.GetWidth(), b.GetHeight()) {
 		return nil, false
 	}
 	piece, exists := b.pieces[pos]
@@ -88,22 +83,24 @@ func (b *Board) GetPiece(pos Coord) (Tile, bool) {
 
 // Sets a piece at a specific position
 func (b *Board) SetPiece(pos Coord, p Tile) {
-	if pos.X < 0 || pos.X >= b.GetWidth() || pos.Y < 0 || pos.Y >= b.GetHeight() {
+	if !pos.IsInBounds(b.GetWidth(), b.GetHeight()) {
 		return
 	}
 	b.pieces[pos] = p
 }
 
-// Moves a piece on a board
-func (b *Board) MovePiece(start, end Coord) {
-	if start.X < 0 || start.X >= b.GetWidth() || start.Y < 0 || start.Y >= b.GetHeight() {
+// Moves a piece at the given position by the given vector
+func (b *Board) MovePiece(piece Coord, direction Vector) {
+	if !piece.IsInBounds(b.GetWidth(), b.GetHeight()) {
 		return
 	}
-	if end.X < 0 || end.X >= b.GetWidth() || end.Y < 0 || end.Y >= b.GetHeight() {
+	newpos := piece
+	newpos.Add(direction)
+	if !newpos.IsInBounds(b.GetWidth(), b.GetHeight()) {
 		return
 	}
-	b.pieces[end] = b.pieces[start]
-	delete(b.pieces, start)
+	b.pieces[newpos] = b.pieces[piece]
+	delete(b.pieces, piece)
 }
 
 // Returns width & height of this board

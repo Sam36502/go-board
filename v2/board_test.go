@@ -49,7 +49,7 @@ func TestCheckerboard(t *testing.T) {
 
 	fmt.Print(brd.RenderString(DoubleBorder))
 
-	brd.MovePiece(Coord{3, 1}, Coord{4, 3})
+	brd.MovePiece(Coord{3, 1}, Vector{1, 2})
 
 	fmt.Print(brd.RenderString(DoubleBorder))
 
