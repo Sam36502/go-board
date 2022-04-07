@@ -1,4 +1,4 @@
-module github.com/Sam36502/go-board
+module github.com/Sam36502/go-board/v2
 
 go 1.13
 
