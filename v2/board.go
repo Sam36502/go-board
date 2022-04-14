@@ -115,7 +115,7 @@ func (b *Board) IsMoveValid(piece Coord, direction Vector) bool {
 
 // Moves a piece at the given position by the given vector
 func (b *Board) MovePiece(piece Coord, direction Vector) {
-	if b.IsMoveValid(piece, direction) {
+	if !b.IsMoveValid(piece, direction) {
 		return
 	}
 	newpos := piece
