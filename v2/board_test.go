@@ -35,7 +35,6 @@ func TestCheckerboard(t *testing.T) {
 
 	brd.PrintBoard()
 
-	return
 	knight := &Pixel{
 		Colour: Colour{
 			Black,
@@ -59,6 +58,8 @@ func TestCheckerboard(t *testing.T) {
 
 	// Remove the piece blocking the move
 	brd.DeletePiece(StartPos.Add(KnightMove.Scale(2)))
+
+	ClearScreen()
 
 	// Try the move again
 	brd.PrintBoard()

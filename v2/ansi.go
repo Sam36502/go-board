@@ -6,7 +6,6 @@
 package board
 
 import (
-	"bufio"
 	"fmt"
 
 	"github.com/mattn/go-colorable"
@@ -48,7 +47,7 @@ const (
 )
 
 func printAnsi(code string) {
-	stdOut := bufio.NewWriter(colorable.NewColorableStdout())
+	stdOut := colorable.NewColorableStdout()
 	fmt.Fprint(stdOut, code)
 }
 
