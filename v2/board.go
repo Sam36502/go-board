@@ -107,27 +107,38 @@ func (b *Board) DeletePiece(pos Coord) {
 
 // Checks if a certain move is valid (within bounds &
 // not blocked by any existing pieces) and returns a bool
-func (b *Board) IsMoveValid(piece Coord, direction Vector) bool {
-	newpos := piece
-	newpos.Add(direction)
-	_, spaceOccupied := b.GetPiece(newpos)
+func (b *Board) IsMoveValid(startPos Coord, endPos Coord) bool {
+	_, pieceExists := b.GetPiece(startPos)
+	_, spaceOccupied := b.GetPiece(endPos)
 
 	return true &&
-		piece.IsInBounds(b.GetWidth(), b.GetHeight()) &&
-		newpos.IsInBounds(b.GetWidth(), b.GetHeight()) &&
+		startPos.IsInBounds(b.GetWidth(), b.GetHeight()) &&
+		pieceExists &&
+		endPos.IsInBounds(b.GetWidth(), b.GetHeight()) &&
 		!spaceOccupied
 }
 
 // Moves a piece at the given position by the given vector
-func (b *Board) MovePiece(piece Coord, direction Vector) {
-	if !b.IsMoveValid(piece, direction) {
+func (b *Board) MovePiece(startPos Coord, direction Vector) {
+	endPos := startPos
+	endPos = endPos.Add(direction)
+
+	if !b.IsMoveValid(startPos, endPos) {
 		return
 	}
-	newpos := piece
-	newpos.Add(direction)
 
-	b.pieces[newpos] = b.pieces[piece]
-	delete(b.pieces, piece)
+	b.pieces[endPos] = b.pieces[startPos]
+	delete(b.pieces, startPos)
+}
+
+// Moves a piece at the given position to a specific position
+func (b *Board) MovePieceTo(startPos Coord, endPos Coord) {
+	if !b.IsMoveValid(startPos, endPos) {
+		return
+	}
+
+	b.pieces[endPos] = b.pieces[startPos]
+	delete(b.pieces, startPos)
 }
 
 // Returns width & height of this board

@@ -67,43 +67,56 @@ func RandomPos(wid, hei int) Coord {
 }
 
 // Checks whether a coordiate is within given bounds
-func (p *Coord) IsInBounds(wid, hei int) bool {
+func (p Coord) IsInBounds(wid, hei int) bool {
 	return p.X >= 0 && p.X < wid && p.Y >= 0 && p.Y < hei
 }
 
 // Adds a vector to this coord and then returns the coord again
-func (a *Coord) Add(b Vector) *Coord {
+func (a Coord) Add(b Vector) Coord {
 	a.X += b.X
 	a.Y += b.Y
 	return a
 }
 
 // Scales this vector and returns it
-func (a *Vector) Scale(s int) *Vector {
+func (a Vector) Scale(s int) Vector {
 	a.X *= s
 	a.Y *= s
 	return a
 }
 
+// Mirrors this vector along the x axis
+func (a Vector) MirrorX() Vector {
+	a.X *= INVERT_SCALAR
+	return a
+}
+
+// Mirrors this vector along the y axis
+func (a Vector) MirrorY() Vector {
+	a.Y *= INVERT_SCALAR
+	return a
+}
+
+// Flips the vector's X and Y components
+// effectively mirroring it along the f(x)=y line
+func (a Vector) Flip() Vector {
+	swp := a.X
+	a.X = a.Y
+	a.Y = swp
+	return a
+}
+
+// Rotates this vector 90° to the right
+func (a Vector) RotRight() Vector {
+	return a.Flip().MirrorX()
+}
+
+// Rotates this vector 90° to the left
+func (a Vector) RotLeft() Vector {
+	return a.Flip().MirrorY()
+}
+
 // Inverts this vector and returns it
-func (a *Vector) Invert() *Vector {
+func (a Vector) Invert() Vector {
 	return a.Scale(INVERT_SCALAR)
-}
-
-// Converts this position to a vector
-// originating in the bottom-left corner
-func (c *Coord) ToVector() *Vector {
-	return &Vector{
-		c.X,
-		c.Y,
-	}
-}
-
-// Converts this vector to the position of the
-// end of the vector placed in the bottom-left corner
-func (v *Vector) ToCoord() *Coord {
-	return &Coord{
-		v.X,
-		v.Y,
-	}
 }

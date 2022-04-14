@@ -45,20 +45,24 @@ func TestCheckerboard(t *testing.T) {
 			"K1",
 		},
 	}
-	brd.SetPiece(Coord{3, 1}, knight)
-	brd.SetPiece(Coord{4, 3}, knight)
+
+	StartPos := Coord{3, 1}
+	KnightMove := Vector{1, 2}
+
+	brd.SetPiece(StartPos, knight)
+	brd.SetPiece(StartPos.Add(KnightMove.Scale(2)), knight)
 
 	// Try to move the piece to the same position as the other one
 	fmt.Print(brd.RenderString(DoubleBorder))
-	brd.MovePiece(Coord{3, 1}, Vector{1, 2})
+	brd.MovePiece(StartPos, KnightMove.Scale(2))
 	fmt.Print(brd.RenderString(DoubleBorder))
 
 	// Remove the piece blocking the move
-	brd.DeletePiece(Coord{4, 3})
+	brd.DeletePiece(StartPos.Add(KnightMove.Scale(2)))
 
 	// Try the move again
 	fmt.Print(brd.RenderString(DoubleBorder))
-	brd.MovePiece(Coord{3, 1}, Vector{1, 2})
+	brd.MovePiece(StartPos, KnightMove.MirrorX())
 	fmt.Print(brd.RenderString(DoubleBorder))
 
 }
