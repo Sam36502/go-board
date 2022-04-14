@@ -100,6 +100,11 @@ func (b *Board) SetPiece(pos Coord, p Tile) {
 	b.pieces[pos] = p
 }
 
+// Remove a piece from the board
+func (b *Board) DeletePiece(pos Coord) {
+	delete(b.pieces, pos)
+}
+
 // Checks if a certain move is valid (within bounds &
 // not blocked by any existing pieces) and returns a bool
 func (b *Board) IsMoveValid(piece Coord, direction Vector) bool {
