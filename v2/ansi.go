@@ -48,8 +48,8 @@ const (
 )
 
 func printAnsi(code string) {
-	stdout := bufio.NewWriter(colorable.NewColorableStdout())
-	fmt.Print(stdout, code)
+	stdOut := bufio.NewWriter(colorable.NewColorableStdout())
+	fmt.Fprint(stdOut, code)
 }
 
 func ClearScreen() {

@@ -1,7 +1,6 @@
 package board
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -34,8 +33,9 @@ func TestCheckerboard(t *testing.T) {
 		blk = !blk
 	}
 
-	fmt.Print(brd.RenderString())
+	brd.PrintBoard()
 
+	return
 	knight := &Pixel{
 		Colour: Colour{
 			Black,
@@ -53,18 +53,16 @@ func TestCheckerboard(t *testing.T) {
 	brd.SetPiece(StartPos.Add(KnightMove.Scale(2)), knight)
 
 	// Try to move the piece to the same position as the other one
-	fmt.Print(brd.RenderString())
+	brd.PrintBoard()
 	brd.MovePiece(StartPos, KnightMove.Scale(2))
-	fmt.Print(brd.RenderString())
+	brd.PrintBoard()
 
 	// Remove the piece blocking the move
 	brd.DeletePiece(StartPos.Add(KnightMove.Scale(2)))
 
-	ClearScreen()
-
 	// Try the move again
-	fmt.Print(brd.RenderString())
+	brd.PrintBoard()
 	brd.MovePiece(StartPos, KnightMove.MirrorX())
-	fmt.Print(brd.RenderString())
+	brd.PrintBoard()
 
 }
