@@ -46,6 +46,7 @@ func TestCheckerboard(t *testing.T) {
 		},
 	}
 	brd.SetPiece(Coord{3, 1}, knight)
+	brd.SetPiece(Coord{4, 3}, knight)
 
 	fmt.Print(brd.RenderString(DoubleBorder))
 

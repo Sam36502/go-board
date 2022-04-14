@@ -100,16 +100,27 @@ func (b *Board) SetPiece(pos Coord, p Tile) {
 	b.pieces[pos] = p
 }
 
+// Checks if a certain move is valid (within bounds &
+// not blocked by any existing pieces) and returns a bool
+func (b *Board) IsMoveValid(piece Coord, direction Vector) bool {
+	newpos := piece
+	newpos.Add(direction)
+	_, spaceOccupied := b.GetPiece(newpos)
+
+	return true &&
+		piece.IsInBounds(b.GetWidth(), b.GetHeight()) &&
+		newpos.IsInBounds(b.GetWidth(), b.GetHeight()) &&
+		!spaceOccupied
+}
+
 // Moves a piece at the given position by the given vector
 func (b *Board) MovePiece(piece Coord, direction Vector) {
-	if !piece.IsInBounds(b.GetWidth(), b.GetHeight()) {
+	if b.IsMoveValid(piece, direction) {
 		return
 	}
 	newpos := piece
 	newpos.Add(direction)
-	if !newpos.IsInBounds(b.GetWidth(), b.GetHeight()) {
-		return
-	}
+
 	b.pieces[newpos] = b.pieces[piece]
 	delete(b.pieces, piece)
 }
