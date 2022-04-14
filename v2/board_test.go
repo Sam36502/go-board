@@ -22,7 +22,7 @@ var (
 
 func TestCheckerboard(t *testing.T) {
 
-	brd := NewBoard(8, 8, tWhite)
+	brd := NewBoard(8, 8, DoubleBorder, tWhite)
 	blk := false
 	for y := 0; y < 8; y++ {
 		for x := 0; x < 8; x++ {
@@ -34,7 +34,7 @@ func TestCheckerboard(t *testing.T) {
 		blk = !blk
 	}
 
-	fmt.Print(brd.RenderString(DoubleBorder))
+	fmt.Print(brd.RenderString())
 
 	knight := &Pixel{
 		Colour: Colour{
@@ -53,16 +53,18 @@ func TestCheckerboard(t *testing.T) {
 	brd.SetPiece(StartPos.Add(KnightMove.Scale(2)), knight)
 
 	// Try to move the piece to the same position as the other one
-	fmt.Print(brd.RenderString(DoubleBorder))
+	fmt.Print(brd.RenderString())
 	brd.MovePiece(StartPos, KnightMove.Scale(2))
-	fmt.Print(brd.RenderString(DoubleBorder))
+	fmt.Print(brd.RenderString())
 
 	// Remove the piece blocking the move
 	brd.DeletePiece(StartPos.Add(KnightMove.Scale(2)))
 
+	ClearScreen()
+
 	// Try the move again
-	fmt.Print(brd.RenderString(DoubleBorder))
+	fmt.Print(brd.RenderString())
 	brd.MovePiece(StartPos, KnightMove.MirrorX())
-	fmt.Print(brd.RenderString(DoubleBorder))
+	fmt.Print(brd.RenderString())
 
 }

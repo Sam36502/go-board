@@ -1,9 +1,21 @@
+/*
+ *
+ *		ANSI Control Code Utils
+ *
+ */
 package board
 
 import (
+	"bufio"
 	"fmt"
 
+	"github.com/mattn/go-colorable"
 	"github.com/mgutz/ansi"
+)
+
+const (
+	ANSI_CLEAR_SCREEN = "\x1b[2J\x1b[H"
+	ANSI_RESET_COLOUR = ansi.Reset
 )
 
 type Colour struct {
@@ -34,3 +46,16 @@ const (
 	LightCyan    = "cyan+h"
 	LightWhite   = "white+h"
 )
+
+func printAnsi(code string) {
+	stdout := bufio.NewWriter(colorable.NewColorableStdout())
+	fmt.Print(stdout, code)
+}
+
+func ClearScreen() {
+	printAnsi(ANSI_CLEAR_SCREEN)
+}
+
+func ResetColour() {
+	printAnsi(ANSI_RESET_COLOUR)
+}

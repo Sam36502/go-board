@@ -36,6 +36,7 @@ type Tile interface {
 type Board struct {
 	tiles  [][]Tile
 	pieces map[Coord]Tile
+	border Border
 }
 
 /*
@@ -44,7 +45,7 @@ type Board struct {
 
 // Creates a new board with `initTile` as the
 // default tile everything is set as
-func NewBoard(width, height int, initTile Tile) *Board {
+func NewBoard(width, height int, border Border, initTile Tile) *Board {
 	b := Board{}
 	for y := 0; y < height; y++ {
 		b.tiles = append(b.tiles, []Tile{})
@@ -53,7 +54,12 @@ func NewBoard(width, height int, initTile Tile) *Board {
 		}
 	}
 	b.pieces = map[Coord]Tile{}
+	b.border = border
 	return &b
+}
+
+func (b *Board) SetBorder(border Border) {
+	b.border = border
 }
 
 // Gets the tile from a specific position
@@ -152,7 +158,7 @@ func (b *Board) GetHeight() int {
 
 // Render a board as a string with ANSI
 // control codes for the colours
-func (b *Board) RenderString(border Border) string {
+func (b *Board) RenderString() string {
 
 	// Get an example tile as size reference
 	// TODO: mixed boards with different tiles wouldn't work with this
@@ -161,22 +167,22 @@ func (b *Board) RenderString(border Border) string {
 		exTile = b.GetTile(Coord{0, 0})
 	} else {
 		return fmt.Sprint(
-			border[BORDER_TOP_LEFT],
-			border[BORDER_TOP_RIGHT],
+			b.border[BORDER_TOP_LEFT],
+			b.border[BORDER_TOP_RIGHT],
 			'\n',
-			border[BORDER_BOTTOM_LEFT],
-			border[BORDER_BOTTOM_RIGHT],
+			b.border[BORDER_BOTTOM_LEFT],
+			b.border[BORDER_BOTTOM_RIGHT],
 			'\n',
 		)
 	}
 
 	// Top Border
 	var renderedStr strings.Builder
-	renderedStr.WriteRune(border[BORDER_TOP_LEFT])
+	renderedStr.WriteRune(b.border[BORDER_TOP_LEFT])
 	for i := 0; i < b.GetWidth()*exTile.GetWidth(); i++ {
-		renderedStr.WriteRune(border[BORDER_SIDE_TOP])
+		renderedStr.WriteRune(b.border[BORDER_SIDE_TOP])
 	}
-	renderedStr.WriteRune(border[BORDER_TOP_RIGHT])
+	renderedStr.WriteRune(b.border[BORDER_TOP_RIGHT])
 	renderedStr.WriteByte('\n')
 
 	// Contents
@@ -186,7 +192,7 @@ func (b *Board) RenderString(border Border) string {
 		// In case the tile spans multiple rows
 		for ty := 0; ty < exTile.GetHeight(); ty++ {
 
-			renderedStr.WriteRune(border[BORDER_SIDE_LEFT])
+			renderedStr.WriteRune(b.border[BORDER_SIDE_LEFT])
 			for x, tile := range row {
 
 				// Check if a piece is here
@@ -211,19 +217,24 @@ func (b *Board) RenderString(border Border) string {
 				}
 				renderedStr.WriteString(ansi.Reset)
 			}
-			renderedStr.WriteRune(border[BORDER_SIDE_RIGHT])
+			renderedStr.WriteRune(b.border[BORDER_SIDE_RIGHT])
 			renderedStr.WriteByte('\n')
 
 		}
 	}
 
 	// bottom Border
-	renderedStr.WriteRune(border[BORDER_BOTTOM_LEFT])
+	renderedStr.WriteRune(b.border[BORDER_BOTTOM_LEFT])
 	for i := 0; i < b.GetWidth()*exTile.GetWidth(); i++ {
-		renderedStr.WriteRune(border[BORDER_SIDE_BOTTOM])
+		renderedStr.WriteRune(b.border[BORDER_SIDE_BOTTOM])
 	}
-	renderedStr.WriteRune(border[BORDER_BOTTOM_RIGHT])
+	renderedStr.WriteRune(b.border[BORDER_BOTTOM_RIGHT])
 	renderedStr.WriteByte('\n')
 
 	return renderedStr.String()
+}
+
+// Prints the rendered board with ANSI control chars
+func (b *Board) PrintBoard() {
+	printAnsi(b.RenderString() + "\n")
 }
