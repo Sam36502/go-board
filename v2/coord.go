@@ -71,7 +71,7 @@ func (p *Coord) IsInBounds(wid, hei int) bool {
 	return p.X >= 0 && p.X < wid && p.Y >= 0 && p.Y < hei
 }
 
-// Adds a vector to this vector and then returns the current vector
+// Adds a vector to this coord and then returns the coord again
 func (a *Coord) Add(b Vector) *Coord {
 	a.X += b.X
 	a.Y += b.Y
@@ -79,14 +79,14 @@ func (a *Coord) Add(b Vector) *Coord {
 }
 
 // Scales this vector and returns it
-func (a *Coord) Scale(s int) *Coord {
+func (a *Vector) Scale(s int) *Vector {
 	a.X *= s
 	a.Y *= s
 	return a
 }
 
 // Inverts this vector and returns it
-func (a *Coord) Invert() *Coord {
+func (a *Vector) Invert() *Vector {
 	return a.Scale(INVERT_SCALAR)
 }
 
