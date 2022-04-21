@@ -1,6 +1,6 @@
 /*
  *
- *		GO BOARD
+ *	Implementation of LayerRenderer
  *
  *	Handles managing and displaying
  *	of 2D ASCII boards.
@@ -16,46 +16,21 @@ import (
 	"github.com/mgutz/ansi"
 )
 
-/*
-	TYPES
-*/
-
-// Interface of things to be put on the board
-// Chars is a string array of characters to display
-// in the Tile when printed
-type Tile interface {
-	SetColour(Colour)
-	SetChars([]string)
-	GetANSIString() string
-	GetChars() []string
-	GetWidth() int
-	GetHeight() int
+type Layer struct {
+	squares [][]SquareRenderer
+	border  Border
 }
 
-// Holds all the board-related data
-type Board struct {
-	tiles  [][]Tile
-	pieces map[Coord]Tile
-	border Border
-}
-
-/*
-	FUNCTIONS
-*/
-
-// Creates a new board with `initTile` as the
-// default tile everything is set as
-func NewBoard(width, height int, border Border, initTile Tile) *Board {
-	b := Board{}
-	for y := 0; y < height; y++ {
-		b.tiles = append(b.tiles, []Tile{})
-		for x := 0; x < width; x++ {
-			b.tiles[y] = append(b.tiles[y], initTile)
-		}
+func NewLayer(width, height int, border Border) *Layer {
+	squares := make([][]SquareRenderer, height)
+	for i := 0; i < len(squares); i++ {
+		squares[i] = make([]SquareRenderer, width)
 	}
-	b.pieces = map[Coord]Tile{}
-	b.border = border
-	return &b
+
+	return &Layer{
+		squares: squares,
+		border:  border,
+	}
 }
 
 func (b *Board) SetBorder(border Border) {

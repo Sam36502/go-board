@@ -1,6 +1,7 @@
 package board
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -19,6 +20,7 @@ func TestRenderSquare(t *testing.T) {
 		},
 	)
 	PrintANSIString(squa.RenderString())
+	fmt.Println()
 
 	squa = NewSquare(
 		5,
