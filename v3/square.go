@@ -25,6 +25,10 @@ type Square struct {
 	Chars  []string
 }
 
+// Will raise an error if Square doesn't implement SquareRenderer
+var _ SquareRenderer = (*Square)(nil)
+
+// Creates a new Square with the specified size, colour & characters
 func NewSquare(w, h int, c Colour, cs []string) *Square {
 	return &Square{
 		width:  w,
@@ -34,22 +38,27 @@ func NewSquare(w, h int, c Colour, cs []string) *Square {
 	}
 }
 
+// Set this square colour
 func (p *Square) SetColour(colour Colour) {
 	p.Colour = colour
 }
 
+// Get this square's colour
 func (p *Square) GetColour() Colour {
 	return p.Colour
 }
 
+// Set this square's chars
 func (p *Square) SetChars(chars []string) {
 	p.Chars = chars
 }
 
+// Get this square's chars
 func (p *Square) GetChars() []string {
 	return p.Chars
 }
 
+// Get this square's width
 func (p *Square) GetWidth() int {
 	if p.width <= 0 {
 		p.width = SQUARE_WIDTH
@@ -57,6 +66,7 @@ func (p *Square) GetWidth() int {
 	return p.width
 }
 
+// Get this square's width
 func (p *Square) GetHeight() int {
 	if p.height <= 0 {
 		p.height = SQUARE_HEIGHT
@@ -64,12 +74,14 @@ func (p *Square) GetHeight() int {
 	return p.height
 }
 
-// Can just return an empty string for no formatting
-// if you don't want to use ANSI
+// Gets this square's colour's ANSI code
+// When implementing, you can just return an empty
+// string for no formatting if you don't want to use ANSI
 func (p *Square) GetANSIString() string {
 	return p.Colour.GetANSIString()
 }
 
+// Renders this square as a string
 func (p *Square) RenderString() string {
 	var render strings.Builder
 	for y := 0; y < p.GetHeight(); y++ {
@@ -91,6 +103,3 @@ func (p *Square) RenderString() string {
 	}
 	return render.String()
 }
-
-// Will raise an error if Pixel doesn't implement Tile
-var _ SquareRenderer = (*Square)(nil)

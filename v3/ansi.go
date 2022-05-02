@@ -48,6 +48,7 @@ const (
 	LightWhite   = "white+h"
 )
 
+// Util function which handles ANSI codes for Windows
 func PrintANSIString(code string) {
 	stdOut := colorable.NewColorableStdout()
 	fmt.Fprint(stdOut, code)

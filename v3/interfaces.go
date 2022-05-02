@@ -40,7 +40,7 @@ type BoardRenderer interface {
 	SetLayer(int, LayerRenderer)
 	GetLayer(int) LayerRenderer
 	SetBorder(Border)
-	GetBorder(Border)
+	GetBorder() Border
 	GetWidth() int
 	GetHeight() int
 	RenderString() string

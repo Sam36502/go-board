@@ -21,6 +21,10 @@ type Layer struct {
 	border  Border
 }
 
+// Will raise an error if Layer doesn't implement LayerRenderer
+var _ LayerRenderer = (*Layer)(nil)
+
+// Creates a new layer with the given width, height and border
 func NewLayer(width, height int, border Border) *Layer {
 	squares := make([][]SquareRenderer, height)
 	for i := 0; i < len(squares); i++ {
@@ -33,148 +37,75 @@ func NewLayer(width, height int, border Border) *Layer {
 	}
 }
 
-func (b *Board) SetBorder(border Border) {
-	b.border = border
+// Returns width of this layer
+func (l *Layer) GetWidth() int {
+	return len(l.squares[0])
 }
 
-// Gets the tile from a specific position
-func (b *Board) GetTile(pos Coord) Tile {
-	if !pos.IsInBounds(b.GetWidth(), b.GetHeight()) {
+// Returns height of this layer
+func (b *Layer) GetHeight() int {
+	return len(b.squares)
+}
+
+// Sets the border to use when rendering this layer
+func (l *Layer) SetBorder(border Border) {
+	l.border = border
+}
+
+// Gets the square from a specific position
+func (l *Layer) GetSquare(pos Coord) SquareRenderer {
+	if !pos.IsInBounds(l.GetWidth(), l.GetHeight()) {
 		return nil
 	}
-	return b.tiles[pos.Y][pos.X]
+	return l.squares[pos.Y][pos.X]
 }
 
-// Sets a tile at a specific position
-func (b *Board) SetTile(pos Coord, t Tile) {
-	if !pos.IsInBounds(b.GetWidth(), b.GetHeight()) {
+// Sets a square at a specific position
+func (l *Layer) SetSquare(pos Coord, s SquareRenderer) {
+	if !pos.IsInBounds(l.GetWidth(), l.GetHeight()) {
 		return
 	}
-	b.tiles[pos.Y][pos.X] = t
+	l.squares[pos.Y][pos.X] = s
 }
 
-// Gets a list of all piece coordinates on the board
-func (b *Board) GetPieceCoords() []Coord {
-	coords := make([]Coord, len(b.pieces))
-	i := 0
-	for k := range b.pieces {
-		coords[i] = k
-		i++
-	}
-	return coords
-}
-
-// Gets the piece from a specific position and returns whether it exists or not
-func (b *Board) GetPiece(pos Coord) (Tile, bool) {
-	if !pos.IsInBounds(b.GetWidth(), b.GetHeight()) {
-		return nil, false
-	}
-	piece, exists := b.pieces[pos]
-	return piece, exists
-}
-
-// Sets a piece at a specific position
-func (b *Board) SetPiece(pos Coord, p Tile) {
-	if !pos.IsInBounds(b.GetWidth(), b.GetHeight()) {
-		return
-	}
-	b.pieces[pos] = p
-}
-
-// Remove a piece from the board
-func (b *Board) DeletePiece(pos Coord) {
-	delete(b.pieces, pos)
-}
-
-// Checks if a certain move is valid (within bounds &
-// not blocked by any existing pieces) and returns a bool
-func (b *Board) IsMoveValid(startPos Coord, endPos Coord) bool {
-	_, pieceExists := b.GetPiece(startPos)
-	_, spaceOccupied := b.GetPiece(endPos)
-
-	return true &&
-		startPos.IsInBounds(b.GetWidth(), b.GetHeight()) &&
-		pieceExists &&
-		endPos.IsInBounds(b.GetWidth(), b.GetHeight()) &&
-		!spaceOccupied
-}
-
-// Moves a piece at the given position by the given vector
-func (b *Board) MovePiece(startPos Coord, direction Vector) {
-	endPos := startPos
-	endPos = endPos.Add(direction)
-
-	if !b.IsMoveValid(startPos, endPos) {
-		return
-	}
-
-	b.pieces[endPos] = b.pieces[startPos]
-	delete(b.pieces, startPos)
-}
-
-// Moves a piece at the given position to a specific position
-func (b *Board) MovePieceTo(startPos Coord, endPos Coord) {
-	if !b.IsMoveValid(startPos, endPos) {
-		return
-	}
-
-	b.pieces[endPos] = b.pieces[startPos]
-	delete(b.pieces, startPos)
-}
-
-// Returns width & height of this board
-func (b *Board) GetWidth() int {
-	return len(b.tiles[0])
-}
-
-func (b *Board) GetHeight() int {
-	return len(b.tiles)
-}
-
-// Render a board as a string with ANSI
+// Render a layer as a string with ANSI
 // control codes for the colours
-func (b *Board) RenderString() string {
+func (l *Layer) RenderString() string {
 
 	// Get an example tile as size reference
 	// TODO: mixed boards with different tiles wouldn't work with this
-	var exTile Tile = nil
-	if b.GetWidth() > 0 && b.GetHeight() > 0 {
-		exTile = b.GetTile(Coord{0, 0})
+	var exTile SquareRenderer = nil
+	if l.GetWidth() > 0 && l.GetHeight() > 0 {
+		exTile = l.GetSquare(Coord{0, 0})
 	} else {
 		return fmt.Sprint(
-			b.border[BORDER_TOP_LEFT],
-			b.border[BORDER_TOP_RIGHT],
+			l.border[BORDER_TOP_LEFT],
+			l.border[BORDER_TOP_RIGHT],
 			'\n',
-			b.border[BORDER_BOTTOM_LEFT],
-			b.border[BORDER_BOTTOM_RIGHT],
+			l.border[BORDER_BOTTOM_LEFT],
+			l.border[BORDER_BOTTOM_RIGHT],
 			'\n',
 		)
 	}
 
 	// Top Border
 	var renderedStr strings.Builder
-	renderedStr.WriteRune(b.border[BORDER_TOP_LEFT])
-	for i := 0; i < b.GetWidth()*exTile.GetWidth(); i++ {
-		renderedStr.WriteRune(b.border[BORDER_SIDE_TOP])
+	renderedStr.WriteRune(l.border[BORDER_TOP_LEFT])
+	for i := 0; i < l.GetWidth()*exTile.GetWidth(); i++ {
+		renderedStr.WriteRune(l.border[BORDER_SIDE_TOP])
 	}
-	renderedStr.WriteRune(b.border[BORDER_TOP_RIGHT])
+	renderedStr.WriteRune(l.border[BORDER_TOP_RIGHT])
 	renderedStr.WriteByte('\n')
 
 	// Contents
-	for y := b.GetHeight() - 1; y >= 0; y-- {
-		row := b.tiles[y]
+	for y := l.GetHeight() - 1; y >= 0; y-- {
+		row := l.squares[y]
 
 		// In case the tile spans multiple rows
 		for ty := 0; ty < exTile.GetHeight(); ty++ {
 
-			renderedStr.WriteRune(b.border[BORDER_SIDE_LEFT])
-			for x, tile := range row {
-
-				// Check if a piece is here
-				piece, exists := b.GetPiece(Coord{x, y})
-				if exists {
-					tile = piece
-				}
+			renderedStr.WriteRune(l.border[BORDER_SIDE_LEFT])
+			for _, tile := range row {
 
 				renderedStr.WriteString(tile.GetANSIString())
 
@@ -192,24 +123,24 @@ func (b *Board) RenderString() string {
 				}
 				renderedStr.WriteString(ansi.Reset)
 			}
-			renderedStr.WriteRune(b.border[BORDER_SIDE_RIGHT])
+			renderedStr.WriteRune(l.border[BORDER_SIDE_RIGHT])
 			renderedStr.WriteByte('\n')
 
 		}
 	}
 
 	// bottom Border
-	renderedStr.WriteRune(b.border[BORDER_BOTTOM_LEFT])
-	for i := 0; i < b.GetWidth()*exTile.GetWidth(); i++ {
-		renderedStr.WriteRune(b.border[BORDER_SIDE_BOTTOM])
+	renderedStr.WriteRune(l.border[BORDER_BOTTOM_LEFT])
+	for i := 0; i < l.GetWidth()*exTile.GetWidth(); i++ {
+		renderedStr.WriteRune(l.border[BORDER_SIDE_BOTTOM])
 	}
-	renderedStr.WriteRune(b.border[BORDER_BOTTOM_RIGHT])
+	renderedStr.WriteRune(l.border[BORDER_BOTTOM_RIGHT])
 	renderedStr.WriteByte('\n')
 
 	return renderedStr.String()
 }
 
 // Prints the rendered board with ANSI control chars
-func (b *Board) PrintBoard() {
-	printAnsi(b.RenderString() + "\n")
+func (l *Layer) PrintBoard() {
+	PrintANSIString(l.RenderString() + "\n")
 }
