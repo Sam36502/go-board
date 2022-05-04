@@ -144,3 +144,52 @@ func (l *Layer) RenderString() string {
 func (l *Layer) PrintBoard() {
 	PrintANSIString(l.RenderString() + "\n")
 }
+
+//// Util Functions ////
+
+// Loops through the layer and sets the square based on a function
+func (l *Layer) FillPattern(patternFunc func(Coord) SquareRenderer) {
+	for y := 0; y < l.GetHeight(); y++ {
+		for x := 0; x < l.GetWidth(); x++ {
+			pos := Coord{x, y}
+			l.SetSquare(pos, patternFunc(pos))
+		}
+	}
+}
+
+// Fills a layer with a single square
+func (l *Layer) FillLayer(sq SquareRenderer) {
+	l.FillPattern(func(c Coord) SquareRenderer {
+		return sq
+	})
+}
+
+// Fills a certain area with a square
+// TODO: Make more efficient with fancy mafs
+func (l *Layer) FillArea(a Coord, b Coord, sq SquareRenderer) {
+	l.FillPattern(func(c Coord) SquareRenderer {
+		if !c.IsInBounds(l.GetWidth(), l.GetHeight()) ||
+			!a.IsInBounds(l.GetWidth(), l.GetHeight()) ||
+			!b.IsInBounds(l.GetWidth(), l.GetHeight()) {
+			return l.GetSquare(c)
+		}
+		x1 := a.X
+		x2 := b.X
+		if a.X > b.X {
+			x1 = b.X
+			x2 = a.X
+		}
+		y1 := a.Y
+		y2 := b.Y
+		if a.Y > b.Y {
+			y1 = b.Y
+			y2 = a.Y
+		}
+
+		if c.X >= x1 && c.X <= x2 && c.Y >= y1 && c.Y <= y2 {
+			return sq
+		} else {
+			return l.GetSquare(c)
+		}
+	})
+}

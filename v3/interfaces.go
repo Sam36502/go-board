@@ -38,7 +38,7 @@ type LayerRenderer interface {
 // Any layers outside the board's size will be truncated.
 type BoardRenderer interface {
 	SetLayer(int, LayerRenderer)
-	GetLayer(int) LayerRenderer
+	GetLayer(int) (LayerRenderer, bool)
 	SetBorder(Border)
 	GetBorder() Border
 	GetWidth() int

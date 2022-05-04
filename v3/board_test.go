@@ -40,4 +40,44 @@ func TestRenderSquare(t *testing.T) {
 
 func TestCheckerboard(t *testing.T) {
 
+	brd := NewBoard(8, 8, ASCIIBevelBorder)
+
+	// Squares
+	sqHidden := NewSquare(
+		2, 2,
+		Colour{
+			Foreground: Black,
+			Background: Cyan,
+		},
+		[]string{},
+	)
+	sqWhite := NewSquare(
+		2, 2,
+		Colour{
+			Foreground: Black,
+			Background: White,
+		},
+		[]string{},
+	)
+	sqBlack := NewSquare(
+		2, 2,
+		Colour{
+			Foreground: Black,
+			Background: Black,
+		},
+		[]string{},
+	)
+
+	lyHidden := brd.CreateLayer()
+	lyHidden.FillLayer(sqHidden)
+
+	lyWhite := brd.CreateLayer()
+	lyWhite.FillLayer(sqWhite)
+
+	lyBlack := brd.CreateLayer()
+
+	brd.SetLayer(0, hiddenLayer)
+	brd.SetLayer(1, hiddenLayer)
+	brd.SetLayer(2, hiddenLayer)
+
 }

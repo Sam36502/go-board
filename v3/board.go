@@ -8,10 +8,12 @@
  */
 package board
 
+import "sort"
+
 type Board struct {
 	width  int
 	height int
-	layers []LayerRenderer
+	layers map[int]LayerRenderer
 	border Border
 }
 
@@ -21,9 +23,7 @@ func NewBoard(width, height int, border Border) *Board {
 	return &Board{
 		width:  width,
 		height: height,
-		layers: []LayerRenderer{
-			NewLayer(width, height, border),
-		},
+		layers: make(map[int]LayerRenderer),
 		border: border,
 	}
 }
@@ -37,8 +37,9 @@ func (b *Board) SetLayer(index int, layer LayerRenderer) {
 }
 
 // Gets a layer from a certain index
-func (b *Board) GetLayer(index int) LayerRenderer {
-	return b.layers[index]
+func (b *Board) GetLayer(index int) (LayerRenderer, bool) {
+	l, ok := b.layers[index]
+	return l, ok
 }
 
 // Sets this board's border to be displayed when rendered
@@ -65,8 +66,30 @@ func (b *Board) GetHeight() int {
 // Stacks each layer visually so any layers with
 // empty squares will show the layer beneath it.
 func (b *Board) RenderString() string {
-	// TODO
-	return ""
+	renderBuf := NewLayer(b.GetWidth(), b.GetHeight(), b.border)
+
+	// Get sorted indices
+	indices := make([]int, len(b.layers))
+	for k := range b.layers {
+		indices = append(indices, k)
+	}
+	sort.Ints(indices)
+
+	for li := len(b.layers) - 1; li >= 0; li-- {
+		lar, ok := b.GetLayer(indices[li])
+		if !ok {
+			continue
+		}
+		for y := 0; y < b.GetWidth(); y++ {
+			for x := 0; x < b.GetWidth(); x++ {
+				pos := Coord{x, y}
+				if renderBuf.GetSquare(pos) == nil && lar.GetSquare(pos) != nil {
+					renderBuf.SetSquare(pos, lar.GetSquare(pos))
+				}
+			}
+		}
+	}
+	return renderBuf.RenderString()
 }
 
 // Prints this board to the console rendered in
@@ -74,4 +97,11 @@ func (b *Board) RenderString() string {
 // (Should also works on Windows)
 func (b *Board) PrintBoard() {
 	PrintANSIString(b.RenderString() + "\n")
+}
+
+//// Utility Functions ////
+
+// Creates a new layer with the same size/border as this board
+func (b *Board) CreateLayer() *Layer {
+	return NewLayer(b.GetWidth(), b.GetHeight(), b.GetBorder())
 }
