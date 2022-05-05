@@ -11,6 +11,11 @@
 
 package board
 
+import (
+	"math/rand"
+	"time"
+)
+
 type PatternFunc func(Coord) SquareRenderer
 
 // Classic Checkerboard pattern
@@ -42,6 +47,24 @@ func PtrnStripesHoriz(sq SquareRenderer, offset int) PatternFunc {
 func PtrnStripesVert(sq SquareRenderer, offset int) PatternFunc {
 	return func(c Coord) SquareRenderer {
 		if (c.X+offset)%2 == 0 {
+			return sq
+		} else {
+			return nil
+		}
+	}
+}
+
+// Random Patter
+// Can optionally provide a Seed (-1 for no seed)
+// Can also determine the percent of results to be set
+func PtrnRandom(sq SquareRenderer, seed int64, fillPercent float32) PatternFunc {
+	if seed != -1 {
+		rand.Seed(seed)
+	} else {
+		rand.Seed(time.Now().Unix())
+	}
+	return func(c Coord) SquareRenderer {
+		if rand.Float32() <= fillPercent {
 			return sq
 		} else {
 			return nil

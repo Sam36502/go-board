@@ -121,4 +121,8 @@ func TestPatterns(t *testing.T) {
 	brd.PrintBoard()
 	lyPattern.FillLayer(nil)
 
+	lyPattern.FillPattern(PtrnRandom(sqBlack, -1, 0.2))
+	brd.PrintBoard()
+	lyPattern.FillLayer(nil)
+
 }
