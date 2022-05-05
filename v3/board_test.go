@@ -5,6 +5,33 @@ import (
 	"testing"
 )
 
+var (
+	sqHidden = NewSquare(
+		2, 1,
+		Colour{
+			Foreground: Black,
+			Background: Cyan,
+		},
+		[]string{},
+	)
+	sqWhite = NewSquare(
+		2, 1,
+		Colour{
+			Foreground: Black,
+			Background: White,
+		},
+		[]string{},
+	)
+	sqBlack = NewSquare(
+		2, 1,
+		Colour{
+			Foreground: Black,
+			Background: Black,
+		},
+		[]string{},
+	)
+)
+
 func TestRenderSquare(t *testing.T) {
 
 	squa := NewSquare(
@@ -40,33 +67,9 @@ func TestRenderSquare(t *testing.T) {
 
 func TestCheckerboard(t *testing.T) {
 
-	brd := NewBoard(8, 8, ASCIIBevelBorder)
+	brd := NewBoard(8, 8, BrdrASCIIBevel)
 
 	// Squares
-	sqHidden := NewSquare(
-		2, 1,
-		Colour{
-			Foreground: Black,
-			Background: Cyan,
-		},
-		[]string{},
-	)
-	sqWhite := NewSquare(
-		2, 1,
-		Colour{
-			Foreground: Black,
-			Background: White,
-		},
-		[]string{},
-	)
-	sqBlack := NewSquare(
-		2, 1,
-		Colour{
-			Foreground: Black,
-			Background: Black,
-		},
-		[]string{},
-	)
 
 	lyHidden := brd.CreateLayer()
 	lyHidden.FillLayer(sqHidden)
@@ -90,18 +93,32 @@ func TestCheckerboard(t *testing.T) {
 	)
 
 	lyBlack := brd.CreateLayer()
-	lyBlack.FillPattern(func(c Coord) SquareRenderer {
-		if (c.X%2 == 0 && c.Y%2 == 0) || (c.X%2 != 0 && c.Y%2 != 0) {
-			return sqBlack
-		} else {
-			return nil
-		}
-	})
+	lyBlack.FillPattern(PtrnCheckerboard(sqBlack, 1))
 
 	brd.SetLayer(0, lyHidden)
 	brd.SetLayer(1, lyWhite)
 	brd.SetLayer(2, lyBlack)
 
 	brd.PrintBoard()
+
+}
+
+func TestPatterns(t *testing.T) {
+
+	brd := NewBoard(10, 10, BrdrSingle)
+	back := brd.CreateLayer()
+	back.FillLayer(sqWhite)
+	brd.SetLayer(0, back)
+
+	lyPattern := brd.CreateLayer()
+	brd.SetLayer(1, lyPattern)
+
+	lyPattern.FillPattern(PtrnStripesHoriz(sqBlack, 0))
+	brd.PrintBoard()
+	lyPattern.FillLayer(nil)
+
+	lyPattern.FillPattern(PtrnStripesVert(sqBlack, 0))
+	brd.PrintBoard()
+	lyPattern.FillLayer(nil)
 
 }

@@ -28,9 +28,9 @@ const (
 )
 
 var (
-	NoBorder         = Border([]rune("        "))
-	ASCIIBorder      = Border([]rune("+-+|+-+|"))
-	ASCIIBevelBorder = Border([]rune("/-\\|/-\\|"))
-	SingleBorder     = Border([]rune("┌─┐│┘─└│"))
-	DoubleBorder     = Border([]rune("╔═╗║╝═╚║"))
+	BrdrNone       = Border([]rune("        "))
+	BrdrASCII      = Border([]rune("+-+|+-+|"))
+	BrdrASCIIBevel = Border([]rune("/-\\|/-\\|"))
+	BrdrSingle     = Border([]rune("┌─┐│┘─└│"))
+	BrdrDouble     = Border([]rune("╔═╗║╝═╚║"))
 )
