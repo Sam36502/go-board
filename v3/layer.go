@@ -107,6 +107,10 @@ func (l *Layer) RenderString() string {
 			renderedStr.WriteRune(l.border[BORDER_SIDE_LEFT])
 			for _, tile := range row {
 
+				if tile == nil {
+					tile = &DEFAULT_SQUARE
+				}
+
 				renderedStr.WriteString(tile.GetANSIString())
 
 				tileRow := ""

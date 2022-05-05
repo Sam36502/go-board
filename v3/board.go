@@ -8,7 +8,9 @@
  */
 package board
 
-import "sort"
+import (
+	"sort"
+)
 
 type Board struct {
 	width  int
@@ -69,14 +71,14 @@ func (b *Board) RenderString() string {
 	renderBuf := NewLayer(b.GetWidth(), b.GetHeight(), b.border)
 
 	// Get sorted indices
-	indices := make([]int, len(b.layers))
+	indices := make([]int, 0)
 	for k := range b.layers {
 		indices = append(indices, k)
 	}
-	sort.Ints(indices)
+	sort.Sort(sort.Reverse(sort.IntSlice(indices)))
 
-	for li := len(b.layers) - 1; li >= 0; li-- {
-		lar, ok := b.GetLayer(indices[li])
+	for _, li := range indices {
+		lar, ok := b.GetLayer(li)
 		if !ok {
 			continue
 		}

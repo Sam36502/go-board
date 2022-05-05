@@ -11,12 +11,24 @@ package board
 
 import (
 	"strings"
+
+	"github.com/mgutz/ansi"
 )
 
 const (
 	SQUARE_WIDTH  = 2 // Makes a roughly square square
 	SQUARE_HEIGHT = 1 // (depending on font)
 )
+
+var DEFAULT_SQUARE = Square{
+	width:  SQUARE_WIDTH,
+	height: SQUARE_HEIGHT,
+	Colour: Colour{
+		Foreground: ansi.DefaultFG,
+		Background: ansi.DefaultBG,
+	},
+	Chars: []string{},
+}
 
 type Square struct {
 	width  int
