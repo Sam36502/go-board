@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	sqHidden = NewSquare(
+	sqCyan = NewSquare(
 		2, 1,
 		Colour{
 			Foreground: Black,
@@ -72,7 +72,7 @@ func TestCheckerboard(t *testing.T) {
 	// Squares
 
 	lyHidden := brd.CreateLayer()
-	lyHidden.FillLayer(sqHidden)
+	lyHidden.FillLayer(sqCyan)
 	lyHidden.FillArea(
 		Coord{4, 4},
 		Coord{7, 7},
@@ -124,5 +124,34 @@ func TestPatterns(t *testing.T) {
 	lyPattern.FillPattern(PtrnRandom(sqBlack, -1, 0.2))
 	brd.PrintBoard()
 	lyPattern.FillLayer(nil)
+
+}
+
+func TestPieces(t *testing.T) {
+
+	brd := NewBoard(7, 7, BrdrDouble)
+
+	lyBackground := brd.CreateLayer()
+	lyBackground.FillLayer(sqBlack)
+
+	lyPieces := NewPieceLayer(brd.GetWidth(), brd.GetHeight(), brd.GetBorder())
+
+	odys := NewSquare(
+		2, 1,
+		sqWhite.Colour,
+		[]string{
+			"oo",
+		})
+	agam := NewSquare(
+		2, 1,
+		sqCyan.Colour,
+		[]string{
+			"oo",
+		})
+
+	lyPieces.SetPiece("Odysseus", Coord{1, 1}, odys)
+	lyPieces.SetPiece("Agammemnon", Coord{1, 1}, agam)
+
+	brd.PrintBoard()
 
 }

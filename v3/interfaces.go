@@ -29,6 +29,8 @@ type SquareRenderer interface {
 type LayerRenderer interface {
 	SetSquare(Coord, SquareRenderer)
 	GetSquare(Coord) SquareRenderer
+	SetBorder(Border)
+	GetBorder() Border
 	GetWidth() int
 	GetHeight() int
 	RenderString() string

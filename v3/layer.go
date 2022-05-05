@@ -43,13 +43,18 @@ func (l *Layer) GetWidth() int {
 }
 
 // Returns height of this layer
-func (b *Layer) GetHeight() int {
-	return len(b.squares)
+func (l *Layer) GetHeight() int {
+	return len(l.squares)
 }
 
 // Sets the border to use when rendering this layer
 func (l *Layer) SetBorder(border Border) {
 	l.border = border
+}
+
+// Retrieve the border of this layer
+func (l *Layer) GetBorder() Border {
+	return l.border
 }
 
 // Gets the square from a specific position
@@ -74,7 +79,6 @@ func (l *Layer) RenderString() string {
 
 	// Get an example tile as size reference
 	// TODO: mixed boards with different tiles wouldn't work with this
-	var exTile SquareRenderer = nil
 	if l.GetWidth() > 0 && l.GetHeight() > 0 {
 		exTile = l.GetSquare(Coord{0, 0})
 	} else {
@@ -90,8 +94,12 @@ func (l *Layer) RenderString() string {
 
 	// Top Border
 	var renderedStr strings.Builder
+	totalWidth := 0
+	for _, s := range l.squares[0] {
+		totalWidth += s.GetWidth()
+	}
 	renderedStr.WriteRune(l.border[BORDER_TOP_LEFT])
-	for i := 0; i < l.GetWidth()*exTile.GetWidth(); i++ {
+	for i := 0; i < totalWidth; i++ {
 		renderedStr.WriteRune(l.border[BORDER_SIDE_TOP])
 	}
 	renderedStr.WriteRune(l.border[BORDER_TOP_RIGHT])
@@ -135,7 +143,7 @@ func (l *Layer) RenderString() string {
 
 	// bottom Border
 	renderedStr.WriteRune(l.border[BORDER_BOTTOM_LEFT])
-	for i := 0; i < l.GetWidth()*exTile.GetWidth(); i++ {
+	for i := 0; i < totalWidth; i++ {
 		renderedStr.WriteRune(l.border[BORDER_SIDE_BOTTOM])
 	}
 	renderedStr.WriteRune(l.border[BORDER_BOTTOM_RIGHT])
