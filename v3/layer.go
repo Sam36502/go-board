@@ -10,30 +10,33 @@
 package board
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/mgutz/ansi"
 )
 
 type Layer struct {
-	squares [][]SquareRenderer
-	border  Border
+	sqWidth  int
+	sqHeight int
+	squares  [][]SquareRenderer
+	border   Border
 }
 
 // Will raise an error if Layer doesn't implement LayerRenderer
 var _ LayerRenderer = (*Layer)(nil)
 
 // Creates a new layer with the given width, height and border
-func NewLayer(width, height int, border Border) *Layer {
+func NewLayer(width, height, sqWidth, sqHeight int, border Border) *Layer {
 	squares := make([][]SquareRenderer, height)
 	for i := 0; i < len(squares); i++ {
 		squares[i] = make([]SquareRenderer, width)
 	}
 
 	return &Layer{
-		squares: squares,
-		border:  border,
+		sqWidth:  sqWidth,
+		sqHeight: sqHeight,
+		squares:  squares,
+		border:   border,
 	}
 }
 
@@ -45,6 +48,16 @@ func (l *Layer) GetWidth() int {
 // Returns height of this layer
 func (l *Layer) GetHeight() int {
 	return len(l.squares)
+}
+
+// Returns width of the squares on this layer
+func (l *Layer) GetSquareWidth() int {
+	return l.sqWidth
+}
+
+// Returns height of this layer
+func (l *Layer) GetSquareHeight() int {
+	return l.sqHeight
 }
 
 // Sets the border to use when rendering this layer
@@ -67,39 +80,22 @@ func (l *Layer) GetSquare(pos Coord) SquareRenderer {
 
 // Sets a square at a specific position
 func (l *Layer) SetSquare(pos Coord, s SquareRenderer) {
-	if !pos.IsInBounds(l.GetWidth(), l.GetHeight()) {
-		return
+	if pos.IsInBounds(l.GetWidth(), l.GetHeight()) && (s == nil || s.GetWidth() == l.GetSquareWidth() || s.GetHeight() == l.GetSquareHeight()) {
+		l.squares[pos.Y][pos.X] = s
 	}
-	l.squares[pos.Y][pos.X] = s
 }
 
 // Render a layer as a string with ANSI
 // control codes for the colours
+// TODO: This is probably really inefficient, but it's
+// Probably fine as long as no one tries to do FMV in
+// the terminal haha...ha
 func (l *Layer) RenderString() string {
-
-	// Get an example tile as size reference
-	// TODO: mixed boards with different tiles wouldn't work with this
-	if l.GetWidth() > 0 && l.GetHeight() > 0 {
-		exTile = l.GetSquare(Coord{0, 0})
-	} else {
-		return fmt.Sprint(
-			l.border[BORDER_TOP_LEFT],
-			l.border[BORDER_TOP_RIGHT],
-			'\n',
-			l.border[BORDER_BOTTOM_LEFT],
-			l.border[BORDER_BOTTOM_RIGHT],
-			'\n',
-		)
-	}
 
 	// Top Border
 	var renderedStr strings.Builder
-	totalWidth := 0
-	for _, s := range l.squares[0] {
-		totalWidth += s.GetWidth()
-	}
 	renderedStr.WriteRune(l.border[BORDER_TOP_LEFT])
-	for i := 0; i < totalWidth; i++ {
+	for i := 0; i < l.GetSquareWidth()*l.GetWidth(); i++ {
 		renderedStr.WriteRune(l.border[BORDER_SIDE_TOP])
 	}
 	renderedStr.WriteRune(l.border[BORDER_TOP_RIGHT])
@@ -110,7 +106,7 @@ func (l *Layer) RenderString() string {
 		row := l.squares[y]
 
 		// In case the tile spans multiple rows
-		for ty := 0; ty < exTile.GetHeight(); ty++ {
+		for ty := 0; ty < l.GetSquareHeight(); ty++ {
 
 			renderedStr.WriteRune(l.border[BORDER_SIDE_LEFT])
 			for _, tile := range row {
@@ -126,7 +122,7 @@ func (l *Layer) RenderString() string {
 					tileRow = tile.GetChars()[ty]
 				}
 
-				for tx := 0; tx < exTile.GetWidth(); tx++ {
+				for tx := 0; tx < tile.GetWidth(); tx++ {
 					char := byte(' ')
 					if len(tileRow) > tx {
 						char = tileRow[tx]
@@ -143,7 +139,7 @@ func (l *Layer) RenderString() string {
 
 	// bottom Border
 	renderedStr.WriteRune(l.border[BORDER_BOTTOM_LEFT])
-	for i := 0; i < totalWidth; i++ {
+	for i := 0; i < l.GetSquareWidth()*l.GetWidth(); i++ {
 		renderedStr.WriteRune(l.border[BORDER_SIDE_BOTTOM])
 	}
 	renderedStr.WriteRune(l.border[BORDER_BOTTOM_RIGHT])

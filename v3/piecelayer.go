@@ -17,10 +17,9 @@ type PieceLayer struct {
 
 // Adds a piece to this layer to be rendered
 func (l *PieceLayer) SetPiece(id string, pos Coord, p SquareRenderer) {
-	if oldPos, exists := l.pieces[id]; exists {
-		l.renderLayer.SetSquare(oldPos, nil)
+	if _, exists := l.pieces[id]; exists || l.GetPieceAt(pos) != nil {
+		return
 	}
-
 	l.pieces[id] = pos
 	l.renderLayer.SetSquare(pos, p)
 }
@@ -36,10 +35,14 @@ func (l *PieceLayer) RemPiece(id string) {
 // Move a piece along a given vector
 func (l *PieceLayer) MovePiece(id string, move Vector) {
 	if oldPos, exists := l.pieces[id]; exists {
+		newPos := oldPos.Add(move)
+		if !newPos.IsInBounds(l.GetWidth(), l.GetHeight()) {
+			return
+		}
+
 		p := l.renderLayer.GetSquare(oldPos)
 		l.renderLayer.SetSquare(oldPos, nil)
 
-		newPos := oldPos.Add(move)
 		l.pieces[id] = newPos
 		l.renderLayer.SetSquare(newPos, p)
 	}
@@ -61,11 +64,16 @@ func (l *PieceLayer) GetPieceAt(pos Coord) SquareRenderer {
 var _ LayerRenderer = (*PieceLayer)(nil)
 
 // Creates a new layer with the given width, height and border
-func NewPieceLayer(width, height int, border Border) *PieceLayer {
+func NewPieceLayer(width, height, sqWidth, sqHeight int, border Border) *PieceLayer {
 	return &PieceLayer{
-		renderLayer: NewLayer(width, height, border),
-		pieces:      make(map[string]Coord, 0),
+		renderLayer: NewLayer(width, height, sqWidth, sqHeight, border),
+		pieces:      make(map[string]Coord),
 	}
+}
+
+// Returns height of this layer
+func (l *PieceLayer) GetHeight() int {
+	return l.renderLayer.GetHeight()
 }
 
 // Returns width of this layer
@@ -73,9 +81,14 @@ func (l *PieceLayer) GetWidth() int {
 	return l.renderLayer.GetWidth()
 }
 
+// Returns width of the squares on this layer
+func (l *PieceLayer) GetSquareWidth() int {
+	return l.renderLayer.GetSquareWidth()
+}
+
 // Returns height of this layer
-func (l *PieceLayer) GetHeight() int {
-	return l.renderLayer.GetHeight()
+func (l *PieceLayer) GetSquareHeight() int {
+	return l.renderLayer.GetSquareHeight()
 }
 
 // Sets the border to use when rendering this layer

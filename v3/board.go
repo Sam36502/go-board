@@ -68,7 +68,7 @@ func (b *Board) GetHeight() int {
 // Stacks each layer visually so any layers with
 // empty squares will show the layer beneath it.
 func (b *Board) RenderString() string {
-	renderBuf := NewLayer(b.GetWidth(), b.GetHeight(), b.border)
+	renderBuf := NewLayer(b.GetWidth(), b.GetHeight(), SQUARE_WIDTH, SQUARE_HEIGHT, b.border)
 
 	// Get sorted indices
 	indices := make([]int, 0)
@@ -104,6 +104,6 @@ func (b *Board) PrintBoard() {
 //// Utility Functions ////
 
 // Creates a new layer with the same size/border as this board
-func (b *Board) CreateLayer() *Layer {
-	return NewLayer(b.GetWidth(), b.GetHeight(), b.GetBorder())
+func (b *Board) CreateLayer(sqWidth, sqHeight int) *Layer {
+	return NewLayer(b.GetWidth(), b.GetHeight(), sqWidth, sqHeight, b.GetBorder())
 }

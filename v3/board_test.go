@@ -71,7 +71,7 @@ func TestCheckerboard(t *testing.T) {
 
 	// Squares
 
-	lyHidden := brd.CreateLayer()
+	lyHidden := brd.CreateLayer(2, 1)
 	lyHidden.FillLayer(sqCyan)
 	lyHidden.FillArea(
 		Coord{4, 4},
@@ -79,7 +79,7 @@ func TestCheckerboard(t *testing.T) {
 		nil,
 	)
 
-	lyWhite := brd.CreateLayer()
+	lyWhite := brd.CreateLayer(2, 1)
 	lyWhite.FillLayer(sqWhite)
 	lyWhite.FillArea(
 		Coord{4, 4},
@@ -92,7 +92,7 @@ func TestCheckerboard(t *testing.T) {
 		nil,
 	)
 
-	lyBlack := brd.CreateLayer()
+	lyBlack := brd.CreateLayer(2, 1)
 	lyBlack.FillPattern(PtrnCheckerboard(sqBlack, 1))
 
 	brd.SetLayer(0, lyHidden)
@@ -106,11 +106,11 @@ func TestCheckerboard(t *testing.T) {
 func TestPatterns(t *testing.T) {
 
 	brd := NewBoard(10, 10, BrdrSingle)
-	back := brd.CreateLayer()
+	back := brd.CreateLayer(2, 1)
 	back.FillLayer(sqWhite)
 	brd.SetLayer(0, back)
 
-	lyPattern := brd.CreateLayer()
+	lyPattern := brd.CreateLayer(2, 1)
 	brd.SetLayer(1, lyPattern)
 
 	lyPattern.FillPattern(PtrnStripesHoriz(sqBlack, 0))
@@ -131,10 +131,18 @@ func TestPieces(t *testing.T) {
 
 	brd := NewBoard(7, 7, BrdrDouble)
 
-	lyBackground := brd.CreateLayer()
-	lyBackground.FillLayer(sqBlack)
+	lyBackground := brd.CreateLayer(2, 1)
+	brd.SetLayer(0, lyBackground)
+	lyBackground.FillLayer(NewSquare(
+		2, 1, Colour{
+			Foreground: Black,
+			Background: LightYellow,
+		},
+		[]string{},
+	))
 
-	lyPieces := NewPieceLayer(brd.GetWidth(), brd.GetHeight(), brd.GetBorder())
+	lyPieces := NewPieceLayer(brd.GetWidth(), brd.GetHeight(), 2, 1, brd.GetBorder())
+	brd.SetLayer(1, lyPieces)
 
 	odys := NewSquare(
 		2, 1,
@@ -150,7 +158,18 @@ func TestPieces(t *testing.T) {
 		})
 
 	lyPieces.SetPiece("Odysseus", Coord{1, 1}, odys)
+
+	// Won't work, because position is taken
 	lyPieces.SetPiece("Agammemnon", Coord{1, 1}, agam)
+
+	// Now it works
+	lyPieces.SetPiece("Agammemnon", Coord{5, 5}, agam)
+
+	// Won't work; out of bounds
+	lyPieces.MovePiece("Agammemnon", DIRECTIONS_DIAG[0].Scale(3))
+
+	// Now it's valid
+	lyPieces.MovePiece("Odysseus", DIRECTIONS_DIAG[0].Scale(3))
 
 	brd.PrintBoard()
 
